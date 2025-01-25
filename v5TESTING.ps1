@@ -1,14 +1,14 @@
 # List of app names (process names may vary)
 $appsToStop = @(
-    "YourPhone", "IeCompatApp", "WordPad", "BingWeather",
-    "WindowsSoundRecorder", "MathematicalInputPanel", "GetStarted", 
-    "StickyNotes", "ScreenSketch", "SkypeApp", "Photos", 
-    "People", "MSPaint", "OneNote", "OneDrive", 
-    "Office", "ZuneVideo", "MixedReality.Portal", 
-    "MicrosoftSolitaireCollection", "WindowsMaps", "windowscommunicationsapps", 
-    "GrooveMusic", "GetHelp", "FeedbackHub", "Cortana", 
-    "Camera", "WindowsAlarms", "3DViewer", "LinkedIn", 
-    "Todo", "Clipchamp", "Edge"
+    "Microsoft.YourPhone", "Microsoft.IeCompatApp", "Microsoft.WordPad", "Microsoft.BingWeather",
+    "Microsoft.WindowsSoundRecorder", "Microsoft.MathematicalInputPanel", "Microsoft.GetStarted", 
+    "Microsoft.StickyNotes", "Microsoft.ScreenSketch", "Microsoft.SkypeApp", "Microsoft.Photos", 
+    "Microsoft.People", "Microsoft.MSPaint", "Microsoft.Office.OneNote", "Microsoft.OneDrive", 
+    "Microsoft.Office.Desktop", "Microsoft.ZuneVideo", "Microsoft.MixedReality.Portal", 
+    "Microsoft.MicrosoftSolitaireCollection", "Microsoft.WindowsMaps", "microsoft.windowscommunicationsapps", 
+    "Microsoft.GrooveMusic", "Microsoft.GetHelp", "Microsoft.FeedbackHub", "Microsoft.Cortana", 
+    "Microsoft.Camera", "Microsoft.WindowsAlarms", "Microsoft.3DViewer", "LinkedIn.LinkedIn", 
+    "Microsoft.Todo", "Microsoft.Clipchamp", "Microsoft.Edge"
 )
 
 # Function to stop processes related to the app
@@ -17,7 +17,6 @@ function Stop-AppProcesses {
         [string]$appName
     )
     
-    # Get all running processes that match the app name
     $processes = Get-Process | Where-Object { $_.Name -like "*$appName*" }
     
     if ($processes) {
@@ -30,7 +29,7 @@ function Stop-AppProcesses {
     }
 }
 
-# Function to remove the app for the current user
+# Function to remove the app
 function Remove-App {
     param (
         [string]$appName
@@ -38,10 +37,8 @@ function Remove-App {
 
     Write-Host "Attempting to remove $appName..."
 
-    # Try to remove the app for the current user
     Get-AppxPackage -Name $appName | Remove-AppxPackage -ErrorAction SilentlyContinue
 
-    # Check if app was removed
     $appRemoved = -not (Get-AppxPackage -Name $appName -ErrorAction SilentlyContinue)
 
     if ($appRemoved) {
@@ -51,16 +48,9 @@ function Remove-App {
     }
 }
 
-# Loop through each app, stop its processes, and remove the app for the current user
+# Loop through each app, stop its processes, and remove the app
 foreach ($app in $appsToStop) {
     Stop-AppProcesses -appName $app
     Remove-App -appName $app
 }
-
-# Loop through each app and remove the app for all users
-foreach ($app in $appsToStop) {
-    Stop-AppProcesses -appName $app
-    Remove-App -appName $app
-}
-
-Write-Host "All specified apps have been stopped and removed."
+end
