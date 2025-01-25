@@ -1,17 +1,9 @@
-# RUN AS ADMIN
+# Check if the script is running as Administrator
 If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     Write-Host "Please run this script as Administrator!" -ForegroundColor Red
     Exit
 }
 
-# Makes running apps stop lol
-function Stop-AppProcess {
-    param ([string]$appName)
-    Get-Process -Name $appName -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-}
-
-# removes bloatware
-function Remove-Bloatware {
     $bloatApps = @(
         "Microsoft.YourPhone", "Microsoft.IeCompatApp", "Microsoft.WordPad", "Microsoft.BingWeather",
         "Microsoft.WindowsSoundRecorder", "Microsoft.MathematicalInputPanel", "Microsoft.GetStarted", 
@@ -25,13 +17,17 @@ function Remove-Bloatware {
     )
 
     foreach ($app in $bloatApps) {
+        # Stop any running processes related to the app before removal
         Stop-AppProcess -appName $app
+
+        # Remove the app
+        Write-Host "Removing $app..." -ForegroundColor Cyan
         Get-AppxPackage -Name $app -AllUsers | Remove-AppxPackage -ErrorAction SilentlyContinue
         Get-AppxProvisionedPackage -Online | Where-Object DisplayName -eq $app | Remove-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
     }
 }
 
-# Uses WinGet to Install Brave and Remove MS EDGE
+# Function to install Brave browser using Winget
 function Install-Brave {
     Write-Host "Installing Brave Browser..." -ForegroundColor Yellow
     if (Get-Command winget -ErrorAction SilentlyContinue) {
