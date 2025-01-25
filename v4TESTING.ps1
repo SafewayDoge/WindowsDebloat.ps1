@@ -1,15 +1,3 @@
-# Define the URL for Mozilla Firefox installer
-$firefoxInstallerUrl = "https://download.mozilla.org/?product=firefox-stable&os=win&lang=en-US"
-$installerPath = "$env:USERPROFILE\Downloads\firefox_installer.exe"
-
-# Download Mozilla Firefox installer
-Write-Host "Downloading Mozilla Firefox installer..."
-Invoke-WebRequest -Uri $firefoxInstallerUrl -OutFile $installerPath
-
-# Run the installer
-Write-Host "Installing Mozilla Firefox..."
-Start-Process -FilePath $installerPath -ArgumentList "/silent" -Wait
-
 # List of apps to remove
 $appsToRemove = @(
     "Microsoft.YourPhone", "Microsoft.IeCompatApp", "Microsoft.WordPad", "Microsoft.BingWeather",
