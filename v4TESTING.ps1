@@ -10,11 +10,6 @@ Invoke-WebRequest -Uri $firefoxInstallerUrl -OutFile $installerPath
 Write-Host "Installing Mozilla Firefox..."
 Start-Process -FilePath $installerPath -ArgumentList "/silent" -Wait
 
-# Clean up the installer after installation
-Remove-Item $installerPath
-
-Write-Host "Mozilla Firefox installation complete."
-
 # List of apps to remove
 $appsToRemove = @(
     "Microsoft.YourPhone", "Microsoft.IeCompatApp", "Microsoft.WordPad", "Microsoft.BingWeather",
@@ -28,10 +23,42 @@ $appsToRemove = @(
     "Microsoft.Todo", "Microsoft.Clipchamp", "Microsoft.Edge"
 )
 
-# Loop through and remove each app
+# Function to remove an app with retries
+function Remove-AppWithRetry {
+    param (
+        [string]$appName
+    )
+    
+    $maxRetries = 5
+    $retryCount = 0
+    $appRemoved = $false
+    
+    while ($retryCount -lt $maxRetries -and -not $appRemoved) {
+        Write-Host "Attempting to remove $appName... (Attempt $($retryCount + 1))"
+        
+        # Try to remove the app for the current user
+        Get-AppxPackage -Name $appName | Remove-AppxPackage -ErrorAction SilentlyContinue
+        Start-Sleep -Seconds 2  # Wait a bit before checking again
+        
+        # Check if the app is still installed
+        $appRemoved = -not (Get-AppxPackage -Name $appName -ErrorAction SilentlyContinue)
+        
+        if ($appRemoved) {
+            Write-Host "$appName successfully removed."
+        } else {
+            Write-Host "$appName still present, retrying..."
+            $retryCount++
+        }
+    }
+
+    if (-not $appRemoved) {
+        Write-Host "$appName could not be removed after $maxRetries attempts."
+    }
+}
+
+# Loop through and remove each app for the current user with retries
 foreach ($app in $appsToRemove) {
-    Write-Host "Removing $app..."
-    Get-AppxPackage -Name $app | Remove-AppxPackage
+    Remove-AppWithRetry -appName $app
 }
 
 Write-Host "Uninstallation complete."
