@@ -8,7 +8,8 @@ $appsToStop = @(
     "Microsoft.MicrosoftSolitaireCollection", "Microsoft.WindowsMaps", "microsoft.windowscommunicationsapps", 
     "Microsoft.GrooveMusic", "Microsoft.GetHelp", "Microsoft.FeedbackHub", "Microsoft.Cortana", 
     "Microsoft.Camera", "Microsoft.WindowsAlarms", "Microsoft.3DViewer", "LinkedIn.LinkedIn", 
-    "Microsoft.Todo", "Microsoft.Clipchamp", "Microsoft.Edge"
+    "Microsoft.Todo", "Microsoft.Clipchamp", "Microsoft.Edge", 
+    "Microsoft.EdgeCore", "InternetExplorer", "WordPad"
 )
 
 # Function to stop processes related to the app
@@ -53,4 +54,5 @@ foreach ($app in $appsToStop) {
     Stop-AppProcesses -appName $app
     Remove-App -appName $app
 }
-end
+
+Write-Host "All specified apps have been stopped and removed."
