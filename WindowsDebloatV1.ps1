@@ -12,7 +12,7 @@ $appsToStop = @(
     "Microsoft.EdgeCore", "InternetExplorer", "WordPad"
 )
 
-# Function to stop processes related to the app
+# Function to stop processes related to the app 
 function Stop-AppProcesses {
     param (
         [string]$appName
