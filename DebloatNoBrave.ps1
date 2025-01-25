@@ -1,4 +1,4 @@
-# Run as Administrator
+# RUN AS ADMIN
 # Remove unwanted pre-installed apps
 
 # List of apps to remove
