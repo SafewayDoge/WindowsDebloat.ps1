@@ -6,7 +6,7 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 # If Debloat.txt is older than 7 days, update list
 if ((Get-Item .\Debloat.txt -ErrorAction SilentlyContinue).LastWriteTime -lt (Get-Date).AddDays(-7)){
     Write-Host "Updating Debloat.txt..."
-    Invoke-WebRequest "https://raw.githubusercontent.com/SafewayDoge/WindowsDebloat.ps1/refs/heads/main/Debloat.txt" -OutFile Debloat.txt
+    Invoke-WebRequest "https://raw.githubusercontent.com/SafewayDoge/WindowsDebloat.ps1/refs/heads/main/Debloating/Debloat.txt" -OutFile Debloat.txt
 }
 
 # Read Debloat.txt into $disable variable & grab current list of appxpackages
@@ -20,3 +20,4 @@ foreach ($array in $disable){
         Get-AppxPackage $array.split(" #")[0] | Remove-AppxPackage -Verbose
     }
 }
+end
