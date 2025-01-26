@@ -20,3 +20,4 @@ foreach ($array in $disable){
         Get-AppxPackage $array.split(" #")[0] | Remove-AppxPackage -Verbose
     }
 }
+end
