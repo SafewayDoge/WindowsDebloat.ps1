@@ -1,0 +1,13 @@
+nternetExplorer, LinkedIn.LinkedIn, Microsoft.3DViewer,
+Microsoft.Alarm, Microsoft.BingWeather, Microsoft.Camera,
+Microsoft.Clipchamp, Microsoft.Cortana, Microsoft.Edge,
+Microsoft.EdgeCore, Microsoft.FeedbackHub, Microsoft.GetHelp,
+Microsoft.GetStarted, Microsoft.GrooveMusic, Microsoft.IeCompatApp,
+Microsoft.MathematicalInputPanel, Microsoft.MicrosoftSolitaireCollection, Microsoft.MixedReality.Portal,
+Microsoft.MSPaint, Microsoft.Office.Desktop, Microsoft.Office.OneNote,
+Microsoft.OneDrive, Microsoft.People, Microsoft.Photos,
+Microsoft.ScreenSketch, Microsoft.SkypeApp, Microsoft.StickyNotes,
+Microsoft.Todo, Microsoft.WindowsAlarms, Microsoft.WindowsCommunicationsApps,
+Microsoft.WindowsMaps, Microsoft.WindowsSoundRecorder, Microsoft.WordPad,
+Microsoft.YourPhone, Microsoft.ZuneVideo
+# list of apps that get call to be removed for, Windows-Debloat.ps1
