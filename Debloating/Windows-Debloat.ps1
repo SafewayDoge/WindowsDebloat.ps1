@@ -1,20 +1,22 @@
-if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`""
-    exit
+# If not Admin, run with Admin privileges 
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
+	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit
 }
 
-$debloatPath = ".\Debloat.txt"
-if (-not (Test-Path $debloatPath) -or (Get-Item $debloatPath).LastWriteTime -lt (Get-Date).AddDays(-7)) {
-    Invoke-WebRequest "https://github.com/mrhaydendp/RemoveEdge/raw/main/Individual%20Scripts/Debloat.txt" -OutFile $debloatPath
+# If Debloat.txt is older than 7 days, update list
+if ((Get-Item .\Debloat.txt -ErrorAction SilentlyContinue).LastWriteTime -lt (Get-Date).AddDays(-7)){
+    Write-Host "Updating Debloat.txt..."
+    Invoke-WebRequest "https://github.com/mrhaydendp/RemoveEdge/raw/main/Individual%20Scripts/Debloat.txt" -OutFile Debloat.txt
 }
 
-$disable = Get-Content $debloatPath
-$appxPackages = Get-AppxPackage | Select-Object -ExpandProperty Name
+# Read Debloat.txt into $disable variable & grab current list of appxpackages
+$disable = Get-Content Debloat.txt
+(Get-AppxPackage).Name | Out-File appxpackages.txt
 
-foreach ($package in $disable) {
-    $packageName = $package.Split(" #")[0]
-    if ($appxPackages -contains $packageName) {
-        Write-Host "Removing: $packageName"
-        Get-AppxPackage $packageName | Remove-AppxPackage -ErrorAction SilentlyContinue
+# If package from Debloat.txt matches one from appxpackages.txt, attempt to remove it
+foreach ($array in $disable){
+    if (Select-String -Quiet $array.split(" #")[0] appxpackages.txt){
+        Write-Host "Attempting to Remove: $array"
+        Get-AppxPackage $array.split(" #")[0] | Remove-AppxPackage -Verbose
     }
 }
