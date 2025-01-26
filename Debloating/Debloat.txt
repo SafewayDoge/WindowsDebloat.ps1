@@ -1,6 +1,3 @@
-InternetExplorer
-LinkedIn
-LinkedIn
 Microsoft.3DViewer
 Microsoft.Alarm
 Microsoft.BingWeather
@@ -34,3 +31,6 @@ Microsoft.YourPhone
 Microsoft.ZuneVideo
 Microsoft365Calendar
 Microsoft365Copilot
+InternetExplorer
+LinkedIn
+LinkedIn
