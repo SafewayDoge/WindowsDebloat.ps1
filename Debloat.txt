@@ -32,5 +32,7 @@ Microsoft.WindowsSoundRecorder
 Microsoft.WordPad
 Microsoft.YourPhone
 Microsoft.ZuneVideo
+Microsoft365Calendar
+Microsoft365Copilot
 
 # list of apps that get call to be removed for, Windows-Debloat.ps1
