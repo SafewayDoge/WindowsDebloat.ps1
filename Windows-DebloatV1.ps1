@@ -1,58 +1,11 @@
-# List of app names (process names may vary)
-$appsToStop = @(
-    "Microsoft.YourPhone", "Microsoft.IeCompatApp", "Microsoft.WordPad", "Microsoft.BingWeather",
-    "Microsoft.WindowsSoundRecorder", "Microsoft.MathematicalInputPanel", "Microsoft.GetStarted", 
-    "Microsoft.StickyNotes", "Microsoft.ScreenSketch", "Microsoft.SkypeApp", "Microsoft.Photos", 
-    "Microsoft.People", "Microsoft.MSPaint", "Microsoft.Office.OneNote", "Microsoft.OneDrive", 
-    "Microsoft.Office.Desktop", "Microsoft.ZuneVideo", "Microsoft.MixedReality.Portal", 
-    "Microsoft.MicrosoftSolitaireCollection", "Microsoft.WindowsMaps", "microsoft.windowscommunicationsapps", 
-    "Microsoft.GrooveMusic", "Microsoft.GetHelp", "Microsoft.FeedbackHub", "Microsoft.Cortana", 
-    "Microsoft.Camera", "Microsoft.WindowsAlarms", "Microsoft.3DViewer", "LinkedIn.LinkedIn", 
-    "Microsoft.Todo", "Microsoft.Clipchamp", "Microsoft.Edge", 
-    "Microsoft.EdgeCore", "InternetExplorer", "WordPad"
-)
+# Run with admin privileges if not already
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit }
 
-# Function to stop processes related to the app 
-function Stop-AppProcesses {
-    param (
-        [string]$appName
-    )
-    
-    $processes = Get-Process | Where-Object { $_.Name -like "*$appName*" }
-    
-    if ($processes) {
-        foreach ($process in $processes) {
-            Write-Host "Stopping process: $($process.Name)"
-            Stop-Process -Name $process.Name -Force -ErrorAction SilentlyContinue
-        }
-    } else {
-        Write-Host "No running processes found for $appName."
-    }
+# Update Debloat.txt if older than 7 days
+if ((Get-Item .\Debloat.txt -ErrorAction SilentlyContinue).LastWriteTime -lt (Get-Date).AddDays(-7)) { Invoke-WebRequest "https://github.com/mrhaydendp/RemoveEdge/raw/main/Individual%20Scripts/Debloat.txt" -OutFile Debloat.txt }
+
+# Remove matching packages
+Get-Content Debloat.txt | ForEach-Object { 
+    $pkg = $_.Split(" #")[0]
+    Get-AppxPackage $pkg | Remove-AppxPackage -ErrorAction SilentlyContinue
 }
-
-# Function to remove the app
-function Remove-App {
-    param (
-        [string]$appName
-    )
-
-    Write-Host "Attempting to remove $appName..."
-
-    Get-AppxPackage -Name $appName | Remove-AppxPackage -ErrorAction SilentlyContinue
-
-    $appRemoved = -not (Get-AppxPackage -Name $appName -ErrorAction SilentlyContinue)
-
-    if ($appRemoved) {
-        Write-Host "$appName successfully removed."
-    } else {
-        Write-Host "Failed to remove $appName."
-    }
-}
-
-# Loop through each app, stop its processes, and remove the app
-foreach ($app in $appsToStop) {
-    Stop-AppProcesses -appName $app
-    Remove-App -appName $app
-}
-
-Write-Host "All specified apps have been stopped and removed."
