@@ -1,4 +1,3 @@
-# RUN AS ADMIN
 # This script removes MicroSoft Edge
 
 if (([Security.Principal.WindowsIdentity]::GetCurrent()).Owner.Value -ne "S-1-5-32-544") { Start-Process wt -Verb RunAs "PowerShell -ExecutionPolicy Bypass -File `"$PSCommandPath`""; exit }
