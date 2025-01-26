@@ -1,11 +1,7 @@
-This is a .ps1 (Powershell) script.
+These are PowerShell scripts,
 
-You can check and change ExecutionPolicy using the following lines down below.
+You do not need to run as admin,
 
-TO CHECK : Get-ExecutionPolicy
-
-TO CHANGE : Set-ExecutionPolicy unrestricted
-
-TO RESTRICT : Set-ExecutionPolicy restricted
+Your PC may reboot for some of the scripts,
 
 If any problems please put issue request in.
