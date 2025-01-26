@@ -1,23 +1,40 @@
-# If not Admin, run with Admin privileges 
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
-	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit
+# Checks if the script is running as Administrator, if not, re-launch it with elevated privileges
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit
 }
 
-# If Debloat.txt is older than 7 days, update list
-if ((Get-Item .\Debloat.txt).LastWriteTime -lt (Get-Date).AddDays(-7)){
-    Write-Host "Updating Debloat.txt"
-    Invoke-WebRequest "https://raw.githubusercontent.com/SafewayDoge/WindowsDebloat.ps1/refs/heads/main/Debloating/Debloat.txt" -OutFile Debloat.txt
+# Check if Debloat.txt needs to be updated (older than 7 days)
+$debloatFile = ".\Debloat.txt"
+if ((Get-Item $debloatFile).LastWriteTime -lt (Get-Date).AddDays(-7)){
+    Write-Host "Debloat.txt is outdated. Updating..."
+    Invoke-WebRequest "https://raw.githubusercontent.com/SafewayDoge/WindowsDebloat.ps1/refs/heads/main/Debloating/Debloat.txt" -OutFile $debloatFile
 }
 
-# Read Debloat.txt into $disable variable & grab current list of appxpackages
-$disable = Get-Content Debloat.txt
+# Read the list of packages to disable/remove from Debloat.txt
+$disable = Get-Content $debloatFile
+
+# Get all installed AppX packages and save to a file
 (Get-AppxPackage).Name | Out-File appxpackages.txt
 
-# If package from Debloat.txt matches one from appxpackages.txt, attempt to remove it
-foreach ($array in $disable){
-    if (Select-String -Quiet $array.split(" #")[0] appxpackages.txt){
-        Write-Host "Attempting to Remove: $array"
-        Get-AppxPackage $array.split(" #")[0] | Remove-AppxPackage -Verbose
+# Process each app in the Debloat.txt list
+foreach ($array in $disable) {
+    # Get package name before any comments (splitting by " #")
+    $appName = ($array -split " #")[0]
+    
+    # Check if the package is installed
+    if (Select-String -Quiet $appName appxpackages.txt) {
+        Write-Host "Attempting to remove: $appName"
+        
+        # Attempt to remove the package
+        try {
+            Get-AppxPackage $appName | Remove-AppxPackage -Verbose
+        } catch {
+            Write-Warning "Failed to remove $appName: $_"
+        }
+    } else {
+        Write-Host "$appName not found. Skipping removal."
     }
 }
-end
+
+Write-Host "Debloating process completed."
