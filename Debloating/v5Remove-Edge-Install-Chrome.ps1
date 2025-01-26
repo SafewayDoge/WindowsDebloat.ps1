@@ -1,4 +1,3 @@
-# RUN AS ADMIN
 # This script removes MicroSoft Edge
 # This script installs Chrome
 
