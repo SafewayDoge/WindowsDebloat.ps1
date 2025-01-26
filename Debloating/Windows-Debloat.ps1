@@ -2,9 +2,6 @@
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]'Administrator')) {
 	Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs; exit
 }
-# If Debloat.txt is older than 7 days, update list
-if ((Get-Item .\Debloat.txt -ErrorAction SilentlyContinue).LastWriteTime -lt (Get-Date).AddDays(-7)){
-    Write-Host "Updating Debloat.txt..."
     Invoke-WebRequest "https://github.com/SafewayDoge/WindowsDebloat.ps1/raw/main/Individual%20Scripts/Debloat.txt" -OutFile Debloat.txt
 }
 # Read Debloat.txt into $disable variable & grab current list of appxpackages
